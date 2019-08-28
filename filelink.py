@@ -43,6 +43,7 @@ def main():
         #    bot.send_message('Нет ссылки', chat_id)
         #if payload != None:
         if payload == 'short':
+                    print(str(last_update))
                     url_ = url_all.get(chat_id)
                     params = {'url': url_}
                     res_clck = requests.get('https://clck.ru/--', params)
