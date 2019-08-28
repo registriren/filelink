@@ -47,6 +47,7 @@ def main():
         #if payload != None:
         if payload == 'short':
                     print(str(last_update))
+                    print(mid)
                     url_ = url_all.get(chat_id)
                     params = {'url': url_}
                     res_clck = requests.get('https://clck.ru/--', params)
@@ -57,6 +58,8 @@ def main():
                     bot.send_message(link_clck, chat_id)
         elif payload == 'long':
                     print(str(last_update))
+                    print(mid)
+                    url_ = url_all.get(chat_id)
                     bot.send_message(str(url_), chat_id)
 
 
