@@ -15,7 +15,7 @@ with open(config, 'r', encoding='utf-8') as c:
 
 #shortener = Shortener(tokens=token_bitly, max_cache_size=8192)
 bot = BotHandler(token)
-
+url_all = {}
 def main():
     marker = None
     while True:
@@ -38,12 +38,13 @@ def main():
                         }]
             bot.send_buttons("Тип ссылки", buttons, chat_id)
             #url_short = [url]
-            url_long = url
+            url_all.update({chat_id : url})
         #else:
         #    bot.send_message('Нет ссылки', chat_id)
         #if payload != None:
         if payload == 'short':
-                    params = {'url': url_long}
+                    url_ = url_all.get(chat_id)
+                    params = {'url': url_}
                     res_clck = requests.get('https://clck.ru/--', params)
                     link_clck = res_clck.text
                     #link_bitly = shortener.shorten_urls(url_short)[0]
@@ -51,7 +52,7 @@ def main():
                     #bot.send_message(link_bitly, chat_id)
                     bot.send_message(link_clck, chat_id)
         elif payload == 'long':
-                    bot.send_message(str(url_long), chat_id)
+                    bot.send_message(str(url_), chat_id)
 
 
 if __name__ == '__main__':
