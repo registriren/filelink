@@ -27,18 +27,21 @@ def main():
         chat_id = bot.get_chat_id(last_update)
         payload = bot.get_payload(last_update)
         url = bot.get_url(last_update)
+        mid = bot.get_message_id(last_update)
 
         if url != None:
+
             buttons = [{"type": 'callback',
                         "text": 'Короткая',
-                        "payload": 'short'},
+                        "payload": 'short'
+                        },
                        {"type": 'callback',
                         "text": 'Исходная',
                         "payload": 'long'
                         }]
             bot.send_buttons("Тип ссылки", buttons, chat_id)
             #url_short = [url]
-            url_all.update({chat_id : url})
+            url_all.update({chat_id: url})
         #else:
         #    bot.send_message('Нет ссылки', chat_id)
         #if payload != None:
@@ -53,6 +56,7 @@ def main():
                     #bot.send_message(link_bitly, chat_id)
                     bot.send_message(link_clck, chat_id)
         elif payload == 'long':
+                    print(str(last_update))
                     bot.send_message(str(url_), chat_id)
 
 

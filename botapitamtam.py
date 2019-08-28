@@ -1,1 +1,1 @@
-https://github.com/registriren/botapitamtam/raw/master/botapitamtam.py
+/home/andrej/python/botapitamtam/botapitamtam.py
