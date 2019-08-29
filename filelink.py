@@ -17,7 +17,9 @@ with open(config, 'r', encoding='utf-8') as c:
 bot = BotHandler(token)
 url_all = {}
 mid_all = {}
+mid_flag = {}
 def main():
+
     marker = None
     while True:
         last_update = bot.get_updates(marker)
@@ -30,7 +32,14 @@ def main():
         url = bot.get_url(last_update)
         mid = bot.get_message_id(last_update)
 
+        if mid_flag.get(chat_id) == 1:
+            mid_all.update({chat_id: mid})
+            print(mid_all.get(chat_id))
+            mid_flag.update({chat_id: 0})
+
         if url != None:
+            print(mid_all.get(chat_id))
+            bot.delete_message(mid_all.get(chat_id))
             buttons = [{"type": 'callback',
                         "text": 'Короткая',
                         "payload": 'short'
@@ -42,17 +51,16 @@ def main():
             bot.send_buttons("Тип ссылки", buttons, chat_id)
             #url_short = [url]
             url_all.update({chat_id: url})
-            mid_all.update({chat_id: mid})
-            print(mid)
-        #else:
-        #    bot.send_message('Нет ссылки', chat_id)
-        #if payload != None:
+            mid_flag.update({chat_id: 1})
+            print(last_update)
+
+        mid_ = mid_all.get(chat_id)
+        url_ = url_all.get(chat_id)
+
         if payload == 'short':
                     print(str(last_update))
-                    mid_ = mid_all.get(chat_id)
                     print(mid_)
                     bot.delete_message(mid_)
-                    url_ = url_all.get(chat_id)
                     params = {'url': url_}
                     res_clck = requests.get('https://clck.ru/--', params)
                     link_clck = res_clck.text
@@ -63,10 +71,8 @@ def main():
         elif payload == 'long':
                     print(str(last_update))
                     print(mid)
-                    mid_ = mid_all.get(chat_id)
                     print(mid_)
                     bot.delete_message(mid_)
-                    url_ = url_all.get(chat_id)
                     bot.send_message(str(url_), chat_id)
 
 
