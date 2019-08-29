@@ -43,6 +43,7 @@ def main():
             #url_short = [url]
             url_all.update({chat_id: url})
             mid_all.update({chat_id: mid})
+            print(mid)
         #else:
         #    bot.send_message('Нет ссылки', chat_id)
         #if payload != None:
