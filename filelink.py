@@ -48,8 +48,8 @@ def main():
         #if payload != None:
         if payload == 'short':
                     print(str(last_update))
-                    print(mid)
                     mid_ = mid_all.get(chat_id)
+                    print(mid_)
                     bot.delete_message(mid_)
                     url_ = url_all.get(chat_id)
                     params = {'url': url_}
@@ -63,6 +63,7 @@ def main():
                     print(str(last_update))
                     print(mid)
                     mid_ = mid_all.get(chat_id)
+                    print(mid_)
                     bot.delete_message(mid_)
                     url_ = url_all.get(chat_id)
                     bot.send_message(str(url_), chat_id)
