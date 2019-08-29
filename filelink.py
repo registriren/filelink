@@ -16,6 +16,7 @@ with open(config, 'r', encoding='utf-8') as c:
 #shortener = Shortener(tokens=token_bitly, max_cache_size=8192)
 bot = BotHandler(token)
 url_all = {}
+mid_all = {}
 def main():
     marker = None
     while True:
@@ -30,7 +31,6 @@ def main():
         mid = bot.get_message_id(last_update)
 
         if url != None:
-
             buttons = [{"type": 'callback',
                         "text": 'Короткая',
                         "payload": 'short'
