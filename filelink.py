@@ -42,12 +42,15 @@ def main():
             bot.send_buttons("Тип ссылки", buttons, chat_id)
             #url_short = [url]
             url_all.update({chat_id: url})
+            mid_all.update({chat_id: mid})
         #else:
         #    bot.send_message('Нет ссылки', chat_id)
         #if payload != None:
         if payload == 'short':
                     print(str(last_update))
                     print(mid)
+                    mid_ = mid_all.get(chat_id)
+                    bot.delete_message(mid_)
                     url_ = url_all.get(chat_id)
                     params = {'url': url_}
                     res_clck = requests.get('https://clck.ru/--', params)
@@ -59,6 +62,8 @@ def main():
         elif payload == 'long':
                     print(str(last_update))
                     print(mid)
+                    mid_ = mid_all.get(chat_id)
+                    bot.delete_message(mid_)
                     url_ = url_all.get(chat_id)
                     bot.send_message(str(url_), chat_id)
 
