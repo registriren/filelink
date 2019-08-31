@@ -32,14 +32,14 @@ def main():
         
         if url != None:
             bot.delete_message(mid_all.get(chat_id))
-            buttons = [{"type": 'callback',
+            buttons = [[{"type": 'callback',
                         "text": 'Короткая',
                         "payload": 'short'
                         },
                        {"type": 'callback',
                         "text": 'Исходная',
                         "payload": 'long'
-                        }]
+                        }]]
             mid = bot.send_buttons("Тип ссылки", buttons, chat_id)
             url_all.update({chat_id: url})
             mid_all.update({chat_id: mid})
