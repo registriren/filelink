@@ -17,7 +17,7 @@ with open(config, 'r', encoding='utf-8') as c:
 bot = BotHandler(token)
 url_all = {}
 mid_all = {}
-
+mid_reply_all = {}
 def main():
     marker = None
     while True:
@@ -29,8 +29,9 @@ def main():
         chat_id = bot.get_chat_id(last_update)
         payload = bot.get_payload(last_update)
         url = bot.get_url(last_update)
-        
+
         if url != None:
+            mid_reply = bot.get_message_id(last_update)
             bot.delete_message(mid_all.get(chat_id))
             buttons = [[{"type": 'callback',
                         "text": 'Короткая',
@@ -43,6 +44,7 @@ def main():
             mid = bot.send_buttons("Тип ссылки", buttons, chat_id)
             url_all.update({chat_id: url})
             mid_all.update({chat_id: mid})
+            mid_reply_all.update({chat_id: mid_reply})
             
 
         mid_ = mid_all.get(chat_id)
@@ -55,10 +57,11 @@ def main():
                     link_clck = res_clck.text
                     #link_bitly = shortener.shorten_urls(url_short)[0]
                     #bot.send_message(link_bitly, chat_id)
-                    bot.send_message(link_clck, chat_id)
+                    bot.send_reply_message(link_clck, mid_reply_all.get(chat_id), chat_id)
         elif payload == 'long':
                     bot.delete_message(mid_)
-                    bot.send_message(str(url_), chat_id)
+                    #bot.send_message(str(url_), chat_id)
+                    bot.send_reply_message(str(url_), mid_reply_all.get(chat_id), chat_id)
 
 
 if __name__ == '__main__':
