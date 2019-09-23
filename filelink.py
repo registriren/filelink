@@ -31,6 +31,7 @@ def main():
         chat_id = bot.get_chat_id(last_update)
         payload = bot.get_payload(last_update)
         url = bot.get_url(last_update)
+        callback_id = bot.get_callback_id(last_update)
 
         if url != None:
             mid_reply = bot.get_message_id(last_update)
@@ -53,6 +54,7 @@ def main():
         url_ = url_all.get(chat_id)
 
         if payload == 'short':
+            bot.send_answer_callback(callback_id, 'получаю ссылку...')
             bot.delete_message(mid_)
             params = {'url': url_}
             res_clck = requests.get('https://clck.ru/--', params)
@@ -61,8 +63,8 @@ def main():
             # bot.send_message(link_bitly, chat_id)
             bot.send_reply_message(link_clck, mid_reply_all.get(chat_id), chat_id)
         elif payload == 'long':
+            bot.send_answer_callback(callback_id, 'получаю ссылку...')
             bot.delete_message(mid_)
-            # bot.send_message(str(url_), chat_id)
             bot.send_reply_message(str(url_), mid_reply_all.get(chat_id), chat_id)
 
 
