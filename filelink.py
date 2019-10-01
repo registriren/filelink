@@ -6,6 +6,11 @@ from botapitamtam import BotHandler
 # from bitlyshortener import Shortener  #для использования требуется python3.7
 import json
 import requests
+import logging
+
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 config = 'config.json'
 with open(config, 'r', encoding='utf-8') as c:
@@ -29,6 +34,7 @@ def main():
             continue
         marker = bot.get_marker(last_update)
         chat_id = bot.get_chat_id(last_update)
+        user_id = bot.get_user_id(last_update)
         payload = bot.get_payload(last_update)
         url = bot.get_url(last_update)
         callback_id = bot.get_callback_id(last_update)
@@ -62,11 +68,12 @@ def main():
             # link_bitly = shortener.shorten_urls(url_short)[0]
             # bot.send_message(link_bitly, chat_id)
             bot.send_reply_message(link_clck, mid_reply_all.get(chat_id), chat_id)
+            logger.info('user_id ({}) recived filelink (clck.ru)'.format(user_id))
         elif payload == 'long':
             bot.send_answer_callback(callback_id, 'получаю ссылку...')
             bot.delete_message(mid_)
             bot.send_reply_message(str(url_), mid_reply_all.get(chat_id), chat_id)
-
+            logger.info('user_id ({}) recived filelink (TT)'.format(user_id))
 
 if __name__ == '__main__':
     try:
