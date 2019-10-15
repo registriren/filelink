@@ -7,10 +7,11 @@ from botapitamtam import BotHandler
 import json
 import requests
 import logging
+import youtube_dl
+
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 
 config = 'config.json'
 with open(config, 'r', encoding='utf-8') as c:
@@ -36,9 +37,15 @@ def main():
         chat_id = bot.get_chat_id(last_update)
         user_id = bot.get_user_id(last_update)
         payload = bot.get_payload(last_update)
-        url = bot.get_url(last_update)
+        url_cont = bot.get_url(last_update)
+        url_txt = bot.get_text(last_update)
         callback_id = bot.get_callback_id(last_update)
-
+        if url_txt is not None and url_cont is None:
+            with youtube_dl.YoutubeDL({'format': 'best',}) as ydl:
+                file_dat = ydl.extract_info(url_txt, download=False)
+                url = file_dat['url']
+        else:
+            url = url_cont
         if url != None:
             mid_reply = bot.get_message_id(last_update)
             bot.delete_message(mid_all.get(chat_id))
@@ -74,6 +81,7 @@ def main():
             bot.delete_message(mid_)
             bot.send_reply_message(str(url_), mid_reply_all.get(chat_id), chat_id)
             logger.info('user_id ({}) recived filelink (TT)'.format(user_id))
+
 
 if __name__ == '__main__':
     try:
