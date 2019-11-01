@@ -37,6 +37,7 @@ def main():
     while True:
         last_update = bot.get_updates(marker)
         # тут можно вставить любые действия которые должны выполняться во время ожидания события
+        print('ждем')
         if last_update == None:  # проверка на пустое событие, если пусто - возврат к началу цикла
             continue
         marker = bot.get_marker(last_update)
