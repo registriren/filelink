@@ -9,7 +9,6 @@ import requests
 import logging
 import youtube_dl
 
-
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -26,6 +25,13 @@ mid_all = {}
 mid_reply_all = {}
 
 
+def clck(url):
+    params = {'url': url}
+    res_clck = requests.get('https://clck.ru/--', params)
+    link = res_clck.text
+    return link
+
+
 def main():
     marker = None
     while True:
@@ -39,14 +45,32 @@ def main():
         payload = bot.get_payload(last_update)
         url_cont = bot.get_url(last_update)
         url_txt = bot.get_text(last_update)
+        mid_url = bot.get_message_id(last_update)
         callback_id = bot.get_callback_id(last_update)
         if url_txt is not None and url_cont is None:
-            with youtube_dl.YoutubeDL({'format': 'best',}) as ydl:
-                file_dat = ydl.extract_info(url_txt, download=False)
-                url = file_dat['url']
-        else:
-            url = url_cont
-        if url != None:
+            try:
+                upd = bot.send_message('Обрабатываю контент...', chat_id)
+                mid = bot.get_message_id(upd)
+                with youtube_dl.YoutubeDL({'format': 'best'}) as ydl:
+                    dat = ydl.extract_info(url_txt, download=False)
+                    url_vid = dat['url']
+                protocol = dat['protocol']
+                title = dat['title']
+                with youtube_dl.YoutubeDL({'format': 'bestaudio'}) as ydl:
+                    dat = ydl.extract_info(url_txt, download=False)
+                    url_aud = dat['url']
+                if protocol != 'm3u8':
+                    link_vid = clck(url_vid)
+                    link_aud = clck(url_aud)
+                    bot.delete_message(mid)
+                    bot.send_reply_message('{}\nVIDEO: {}\nAUDIO: {}'.format(title, link_vid, link_aud), mid_url, chat_id)
+                    logger.info('user_id ({}) youtube-dl'.format(user_id))
+            except Exception as e:
+                logger.error("Error youtube-dl: %s.", e)
+                bot.delete_message(mid)
+                bot.send_message('Ошибка скачивания, возможно ссылка с данного сервиса не поддерживается', chat_id)
+
+        if url_cont != None:
             mid_reply = bot.get_message_id(last_update)
             bot.delete_message(mid_all.get(chat_id))
             buttons = [[{"type": 'callback',
@@ -59,7 +83,7 @@ def main():
                          }]]
             upd = bot.send_buttons("Тип ссылки", buttons, chat_id)
             mid = bot.get_message_id(upd)
-            url_all.update({chat_id: url})
+            url_all.update({chat_id: url_cont})
             mid_all.update({chat_id: mid})
             mid_reply_all.update({chat_id: mid_reply})
 
