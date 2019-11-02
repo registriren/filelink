@@ -62,25 +62,28 @@ def main():
                 if protocol != 'm3u8':
                     link_vid = clck(url_vid)
                     link_aud = clck(url_aud)
+                    button = bot.button_link('Скачать видео', link_vid)
+                    button2 = bot.button_link('Скачать аудио', link_aud)
+                    button.extend(button2)
+                    buttons = [button]
+                    link = bot.link_reply(mid_url)
+                    key = bot.attach_buttons(buttons)
+                    text = '{}\nVIDEO: {}\nAUDIO: {}'.format(title, link_vid, link_aud)
                     bot.delete_message(mid)
-                    bot.send_reply_message('{}\nVIDEO: {}\nAUDIO: {}'.format(title, link_vid, link_aud), mid_url, chat_id)
-                    logger.info('user_id ({}) youtube-dl'.format(user_id))
+                    bot.send_content(key, chat_id, text=text, link=link)
+                    logger.info('user_id {} used youtube-dl'.format(user_id))
             except Exception as e:
-                logger.error("Error youtube-dl: %s.", e)
+                logger.error("Error download youtube-dl: %s.", e)
                 bot.delete_message(mid)
                 bot.send_message('Ошибка скачивания, возможно ссылка с данного сервиса не поддерживается', chat_id)
 
         if url_cont != None:
             mid_reply = bot.get_message_id(last_update)
             bot.delete_message(mid_all.get(chat_id))
-            buttons = [[{"type": 'callback',
-                         "text": 'Короткая',
-                         "payload": 'short'
-                         },
-                        {"type": 'callback',
-                         "text": 'Исходная',
-                         "payload": 'long'
-                         }]]
+            button = bot.button_callback('Короткая', 'short')
+            button2 = bot.button_callback('Исходная', 'long')
+            button.extend(button2)
+            buttons = [button]
             upd = bot.send_buttons("Тип ссылки", buttons, chat_id)
             mid = bot.get_message_id(upd)
             url_all.update({chat_id: url_cont})
@@ -93,18 +96,14 @@ def main():
         if payload == 'short':
             bot.send_answer_callback(callback_id, 'получаю ссылку...')
             bot.delete_message(mid_)
-            params = {'url': url_}
-            res_clck = requests.get('https://clck.ru/--', params)
-            link_clck = res_clck.text
-            # link_bitly = shortener.shorten_urls(url_short)[0]
-            # bot.send_message(link_bitly, chat_id)
+            link_clck = clck(url_)
             bot.send_reply_message(link_clck, mid_reply_all.get(chat_id), chat_id)
-            logger.info('user_id ({}) recived filelink (clck.ru)'.format(user_id))
+            logger.info('user_id {} recived filelink (clck.ru)'.format(user_id))
         elif payload == 'long':
             bot.send_answer_callback(callback_id, 'получаю ссылку...')
             bot.delete_message(mid_)
             bot.send_reply_message(str(url_), mid_reply_all.get(chat_id), chat_id)
-            logger.info('user_id ({}) recived filelink (TT)'.format(user_id))
+            logger.info('user_id {} recived filelink (TT)'.format(user_id))
 
 
 if __name__ == '__main__':
