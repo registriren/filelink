@@ -8,6 +8,7 @@ import json
 import requests
 import logging
 import youtube_dl
+import re
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -35,7 +36,7 @@ def clck(url):
 def main():
     marker = None
     while True:
-        last_update = bot.get_updates(marker)
+        last_update = bot.get_updates(marker, limit=1)
         # тут можно вставить любые действия которые должны выполняться во время ожидания события
         if last_update == None:  # проверка на пустое событие, если пусто - возврат к началу цикла
             continue
@@ -50,6 +51,8 @@ def main():
         if url_txt is not None and url_cont is None:
             try:
                 upd = bot.send_message('Обрабатываю контент...', chat_id)
+                url_txt = re.search("(?P<url>https?://[^\s]+)", url_txt).group("url")
+                print(url_txt)
                 mid = bot.get_message_id(upd)
                 with youtube_dl.YoutubeDL({'format': 'best'}) as ydl:
                     dat = ydl.extract_info(url_txt, download=False)
@@ -59,7 +62,7 @@ def main():
                 with youtube_dl.YoutubeDL({'format': 'bestaudio'}) as ydl:
                     dat = ydl.extract_info(url_txt, download=False)
                     url_aud = dat['url']
-                if protocol != 'm3u8':
+                if protocol == 'http' or protocol == 'https':
                     link_vid = clck(url_vid)
                     link_aud = clck(url_aud)
                     button = bot.button_link('Скачать видео', link_vid)
@@ -75,7 +78,7 @@ def main():
             except Exception as e:
                 logger.error("Error download youtube-dl: %s.", e)
                 bot.delete_message(mid)
-                bot.send_message('Ошибка скачивания, возможно ссылка с данного сервиса не поддерживается', chat_id)
+                bot.send_message('Ошибка скачивания, возможно формат данных по ссылке не поддерживается', chat_id)
 
         if url_cont != None:
             mid_reply = bot.get_message_id(last_update)
