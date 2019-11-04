@@ -52,7 +52,7 @@ def main():
             try:
                 upd = bot.send_message('Обрабатываю контент...', chat_id)
                 url_txt = re.search("(?P<url>https?://[^\s]+)", url_txt).group("url")
-                print(url_txt)
+                print('URL= %s', url_txt)
                 mid = bot.get_message_id(upd)
                 with youtube_dl.YoutubeDL({'format': 'best'}) as ydl:
                     dat = ydl.extract_info(url_txt, download=False)
