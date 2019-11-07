@@ -53,9 +53,9 @@ def main():
         if url_txt is not None and url_cont is None:
             try:
                 upd = bot.send_message('Обрабатываю контент...', chat_id)
+                mid = bot.get_message_id(upd)
                 url_txt = re.search("(?P<url>https?://[^\s]+)", url_txt).group("url")
                 print('URL= ', url_txt)
-                mid = bot.get_message_id(upd)
                 with youtube_dl.YoutubeDL({'format': 'best'}) as ydl:
                     dat = ydl.extract_info(url_txt, download=False)
                     url_vid = dat['url']
