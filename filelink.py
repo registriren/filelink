@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+import urllib
 
 from botapitamtam import BotHandler
 # from bitlyshortener import Shortener  #для использования требуется python3.7
@@ -32,6 +32,8 @@ def clck(url):
     link = res_clck.text
     return link
 
+def url_encode(txt):
+    return urllib.parse.quote(txt)
 
 def main():
     marker = None
@@ -52,7 +54,7 @@ def main():
             try:
                 upd = bot.send_message('Обрабатываю контент...', chat_id)
                 url_txt = re.search("(?P<url>https?://[^\s]+)", url_txt).group("url")
-                print('URL= %s', url_txt)
+                print('URL= ', url_txt)
                 mid = bot.get_message_id(upd)
                 with youtube_dl.YoutubeDL({'format': 'best'}) as ydl:
                     dat = ydl.extract_info(url_txt, download=False)
@@ -63,8 +65,8 @@ def main():
                     dat = ydl.extract_info(url_txt, download=False)
                     url_aud = dat['url']
                 if protocol == 'http' or protocol == 'https':
-                    link_vid = clck(url_vid)
-                    link_aud = clck(url_aud)
+                    link_vid = clck(url_vid+'&title='+url_encode(title))
+                    link_aud = clck(url_aud+'&title='+url_encode(title))
                     button = bot.button_link('Скачать видео', link_vid)
                     button2 = bot.button_link('Скачать аудио', link_aud)
                     button.extend(button2)
