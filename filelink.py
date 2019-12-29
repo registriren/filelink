@@ -50,8 +50,8 @@ def main():
         url_txt = bot.get_text(last_update)
         mid_url = bot.get_message_id(last_update)
         callback_id = bot.get_callback_id(last_update)
-        if 'youtu' in url_txt:
-            try:
+        try:
+            if 'youtu' in url_txt:
                 upd = bot.send_message('Обрабатываю контент...', chat_id)
                 mid = bot.get_message_id(upd)
                 url_txt = re.search("(?P<url>https?://[^\s]+)", url_txt).group("url")
@@ -65,8 +65,8 @@ def main():
                     dat = ydl.extract_info(url_txt, download=False)
                     url_aud = dat['url']
                 if protocol == 'http' or protocol == 'https':
-                    link_vid = clck(url_vid+'&title='+url_encode(title))
-                    link_aud = clck(url_aud+'&title='+url_encode(title))
+                    link_vid = clck(url_vid + '&title=' + url_encode(title))
+                    link_aud = clck(url_aud + '&title=' + url_encode(title))
                     button = bot.button_link('Скачать видео', link_vid)
                     button2 = bot.button_link('Скачать аудио', link_aud)
                     button.extend(button2)
@@ -77,10 +77,10 @@ def main():
                     bot.delete_message(mid)
                     bot.send_content(key, chat_id, text=text, link=link)
                     logger.info('user_id {} used youtube-dl'.format(user_id))
-            except Exception as e:
-                logger.error("Error download youtube-dl: %s.", e)
-                bot.delete_message(mid)
-                bot.send_message('Ошибка скачивания, возможно формат данных по ссылке не поддерживается', chat_id)
+        except Exception as e:
+            logger.error("Error download youtube-dl: %s.", e)
+            bot.delete_message(mid)
+            bot.send_message('Ошибка скачивания, возможно формат данных по ссылке не поддерживается', chat_id)
 
         if url_cont != None:
             mid_reply = bot.get_message_id(last_update)
