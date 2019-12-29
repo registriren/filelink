@@ -50,7 +50,7 @@ def main():
         url_txt = bot.get_text(last_update)
         mid_url = bot.get_message_id(last_update)
         callback_id = bot.get_callback_id(last_update)
-        if url_txt is not None and url_cont is None:
+        if 'https://youtube.com/' in url_txt:
             try:
                 upd = bot.send_message('Обрабатываю контент...', chat_id)
                 mid = bot.get_message_id(upd)
