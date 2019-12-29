@@ -77,10 +77,12 @@ def main():
                     bot.delete_message(mid)
                     bot.send_content(key, chat_id, text=text, link=link)
                     logger.info('user_id {} used youtube-dl'.format(user_id))
+                    url_cont = None
         except Exception as e:
             logger.error("Error download youtube-dl: %s.", e)
             bot.delete_message(mid)
             bot.send_message('Ошибка скачивания, возможно формат данных по ссылке не поддерживается', chat_id)
+            url_cont = None
 
         if url_cont != None:
             mid_reply = bot.get_message_id(last_update)
