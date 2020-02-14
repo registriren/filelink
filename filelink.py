@@ -49,7 +49,12 @@ def main():
             url_txt = bot.get_text(last_update)
             mid_url = bot.get_message_id(last_update)
             callback_id = bot.get_callback_id(last_update)
-            if url_txt != None and url_cont == None:
+            att_type = bot.get_attach_type(last_update)
+            print('att_type', att_type)
+            if att_type == 'share':
+                url_txt = url_cont
+
+            if url_txt:
                 try:
                     upd = bot.send_message('Обрабатываю контент...', chat_id)
                     mid = bot.get_message_id(upd)
@@ -106,7 +111,6 @@ def main():
                 bot.delete_message(mid_)
                 bot.send_reply_message(str(url_), mid_reply_all.get(chat_id), chat_id)
                 logger.info('user_id {} recived filelink (TT)'.format(user_id))
-        continue
 
 
 if __name__ == '__main__':
