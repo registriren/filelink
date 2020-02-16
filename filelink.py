@@ -50,16 +50,14 @@ def main():
             mid_url = bot.get_message_id(last_update)
             callback_id = bot.get_callback_id(last_update)
             att_type = bot.get_attach_type(last_update)
-            print('att_type', att_type)
             if att_type == 'share':
                 url_txt = url_cont
-
-            if url_txt:
+                url_cont = None
+            if url_txt and not url_cont:
                 try:
                     upd = bot.send_message('Обрабатываю контент...', chat_id)
                     mid = bot.get_message_id(upd)
                     url_txt = re.search("(?P<url>https?://[^\s]+)", url_txt).group("url")
-                    print('URL= ', url_txt)
                     with youtube_dl.YoutubeDL({'format': 'best'}) as ydl:
                         dat = ydl.extract_info(url_txt, download=False)
                         url_vid = dat['url']
