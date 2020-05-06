@@ -60,11 +60,12 @@ def main():
             if att_type == 'share':
                 url_txt = url_cont
                 url_cont = None
-            if url_txt and not url_cont:
+            PTR = '(|.+://)(|[A-Za-z0-9-.]+\.)[A-Za-z0-9-]+\.[A-Za-z0-9-]+(|.+)'  # регулярное выражение для проверки ссылки
+            if re.fullmatch(PTR, url_txt) and not url_cont and not payload:
                 try:
                     upd = bot.send_message('Обрабатываю контент...', chat_id)
                     mid = bot.get_message_id(upd)
-                    url_txt = re.search("(?P<url>https?://[^\s]+)", url_txt).group("url")
+                    #url_txt = re.search("(?P<url>https?://[^\s]+)", url_txt).group("url")
                     if "youtu" in url_txt:
                         with youtube_dl.YoutubeDL({'format': 'best'}) as ydl:
                             dat = ydl.extract_info(url_txt, download=False)
@@ -126,9 +127,6 @@ def main():
                         bot.delete_message(mid_)
                         bot.send_reply_message(str(url_), mid_reply_all.get(chat_id), chat_id, dislinkprev=True)
                         logger.info('user_id {} recived filelink (TT)'.format(user_id))
-
-
-
 
 
 if __name__ == '__main__':
