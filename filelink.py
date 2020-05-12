@@ -61,54 +61,57 @@ def main():
                 url_txt = url_cont
                 url_cont = None
             PTR = '(|.+://)(|[A-Za-z0-9-.]+\.)[A-Za-z0-9-]+\.[A-Za-z0-9-]+(|.+)'  # регулярное выражение для проверки ссылки
-            if re.fullmatch(PTR, url_txt) and not url_cont and not payload:
-                try:
-                    upd = bot.send_message('Обрабатываю контент...', chat_id)
-                    mid = bot.get_message_id(upd)
-                    #url_txt = re.search("(?P<url>https?://[^\s]+)", url_txt).group("url")
-                    if "youtu" in url_txt:
-                        with youtube_dl.YoutubeDL({'format': 'best'}) as ydl:
-                            dat = ydl.extract_info(url_txt, download=False)
-                            url_vid = dat['url']
-                        protocol = dat['protocol']
-                        title = dat['title']
-                        with youtube_dl.YoutubeDL({'format': 'bestaudio'}) as ydl:
-                            dat = ydl.extract_info(url_txt, download=False)
-                            url_aud = dat['url']
-                        if protocol == 'http' or protocol == 'https':
-                            link_vid = clck(url_vid + '&title=' + url_encode(title))
-                            link_aud = clck(url_aud + '&title=' + url_encode(title))
-                            button1 = bot.button_link('Скачать видео', link_vid)
-                            button2 = bot.button_link('Скачать аудио', link_aud)
-                            buttons = [[button1, button2]]
-                            link = bot.link_reply(mid_url)
-                            key = bot.attach_buttons(buttons)
-                            text = '{}\nVIDEO: {}\nAUDIO: {}'.format(title, link_vid, link_aud)
+            try:
+                if re.fullmatch(PTR, url_txt) and not url_cont and not payload:
+                    try:
+                        upd = bot.send_message('Обрабатываю контент...', chat_id)
+                        mid = bot.get_message_id(upd)
+                        # url_txt = re.search("(?P<url>https?://[^\s]+)", url_txt).group("url")
+                        if "youtu" in url_txt:
+                            with youtube_dl.YoutubeDL({'format': 'best'}) as ydl:
+                                dat = ydl.extract_info(url_txt, download=False)
+                                url_vid = dat['url']
+                            protocol = dat['protocol']
+                            title = dat['title']
+                            with youtube_dl.YoutubeDL({'format': 'bestaudio'}) as ydl:
+                                dat = ydl.extract_info(url_txt, download=False)
+                                url_aud = dat['url']
+                            if protocol == 'http' or protocol == 'https':
+                                link_vid = clck(url_vid + '&title=' + url_encode(title))
+                                link_aud = clck(url_aud + '&title=' + url_encode(title))
+                                button1 = bot.button_link('Скачать видео', link_vid)
+                                button2 = bot.button_link('Скачать аудио', link_aud)
+                                buttons = [[button1, button2]]
+                                link = bot.link_reply(mid_url)
+                                key = bot.attach_buttons(buttons)
+                                text = '{}\nVIDEO: {}\nAUDIO: {}'.format(title, link_vid, link_aud)
+                                bot.delete_message(mid)
+                                bot.send_message(text, chat_id, attachments=key, link=link)
+                                logger.info('user_id {} used youtube-dl'.format(user_id))
+                        else:
                             bot.delete_message(mid)
-                            bot.send_message(text, chat_id, attachments=key, link=link)
-                            logger.info('user_id {} used youtube-dl'.format(user_id))
-                    else:
+                            short_link(url_txt, mid_url, chat_id)
+                            logger.info('user_id {} recived filelink (clck.ru)'.format(user_id))
+                    except Exception as e:
+                        logger.error("Error download youtube-dl: %s.", e)
                         bot.delete_message(mid)
                         short_link(url_txt, mid_url, chat_id)
                         logger.info('user_id {} recived filelink (clck.ru)'.format(user_id))
-                except Exception as e:
-                    logger.error("Error download youtube-dl: %s.", e)
-                    bot.delete_message(mid)
-                    short_link(url_txt, mid_url, chat_id)
-                    logger.info('user_id {} recived filelink (clck.ru)'.format(user_id))
-            elif url_cont:
-                mid_reply = bot.get_message_id(last_update)
-                bot.delete_message(mid_all.get(chat_id))
-                button1 = bot.button_callback('Короткая', 'short')
-                button2 = bot.button_callback('Исходная', 'long')
-                buttons = [[button1, button2]]
-                upd = bot.send_buttons("Тип ссылки", buttons, chat_id)
-                mid = bot.get_message_id(upd)
-                url_all.update({chat_id: attach})
-                mid_all.update({chat_id: mid})
-                mid_reply_all.update({chat_id: mid_reply})
+                elif url_cont:
+                    mid_reply = bot.get_message_id(last_update)
+                    bot.delete_message(mid_all.get(chat_id))
+                    button1 = bot.button_callback('Короткая', 'short')
+                    button2 = bot.button_callback('Исходная', 'long')
+                    buttons = [[button1, button2]]
+                    upd = bot.send_buttons("Тип ссылки", buttons, chat_id)
+                    mid = bot.get_message_id(upd)
+                    url_all.update({chat_id: attach})
+                    mid_all.update({chat_id: mid})
+                    mid_reply_all.update({chat_id: mid_reply})
+                    flag = None
+            except Exception as e:
+                logger.error("Error input data: %s.", e)
                 flag = None
-
             mid_ = mid_all.get(chat_id)
             url_ = 'tamtam.chat'
             if url_all.get(chat_id) and flag:
