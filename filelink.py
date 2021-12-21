@@ -60,6 +60,8 @@ def main():
             if att_type == 'share':
                 url_txt = url_cont
                 url_cont = None
+            if url_txt is None:
+                url_txt = ''
             PTR = '(|.+://)(|[A-Za-z0-9-.]+\.)[A-Za-z0-9-]+\.[A-Za-z0-9-]+(|.+)'  # регулярное выражение для проверки ссылки
             try:
                 if re.fullmatch(PTR, url_txt) and not url_cont and not payload:
