@@ -7,7 +7,7 @@ from botapitamtam import BotHandler
 import json
 import requests
 import logging
-import youtube_dl
+from yt_dlp import YoutubeDL
 import re
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -69,13 +69,13 @@ def main():
                         upd = bot.send_message('Обрабатываю контент...', chat_id)
                         mid = bot.get_message_id(upd)
                         # url_txt = re.search("(?P<url>https?://[^\s]+)", url_txt).group("url")
-                        if "youtu" in url_txt:
-                            with youtube_dl.YoutubeDL({'format': 'best'}) as ydl:
+                        if url_txt: #"youtu" in
+                            with YoutubeDL({'format': 'best'}) as ydl:
                                 dat = ydl.extract_info(url_txt, download=False)
                                 url_vid = dat['url']
                             protocol = dat['protocol']
                             title = dat['title']
-                            with youtube_dl.YoutubeDL({'format': 'bestaudio'}) as ydl:
+                            with YoutubeDL({'format': 'bestaudio'}) as ydl:
                                 dat = ydl.extract_info(url_txt, download=False)
                                 url_aud = dat['url']
                             if protocol == 'http' or protocol == 'https':
